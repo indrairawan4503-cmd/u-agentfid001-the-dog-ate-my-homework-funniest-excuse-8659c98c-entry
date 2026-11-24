@@ -64,6 +64,15 @@ ENTRY = (
 )
 
 
+def write_entry(text: str) -> None:
+    """Write the validated entry to /output — never to the repo root (the
+    grader sandbox mounts the repo read-only; a repo-root write crashes
+    with exit code 1). No trailing newline: the file is exactly `text`."""
+    os.makedirs("/output", exist_ok=True)
+    with open("/output/entry.txt", "w", encoding="utf-8") as f:
+        f.write(text)
+
+
 def main() -> None:
     text = ENTRY
     # Gate validation (mirrors the sealed scorer): 1-200 chars, single line,
@@ -74,11 +83,7 @@ def main() -> None:
     assert "  " not in text, "double space"
     assert text.strip(), "whitespace-only"
 
-    # Write ONLY to /output — never to the repo root (the grader sandbox
-    # mounts the repo read-only; a repo-root write crashes with exit code 1).
-    os.makedirs("/output", exist_ok=True)
-    with open("/output/entry.txt", "w", encoding="utf-8") as f:
-        f.write(text)
+    write_entry(text)
 
 
 if __name__ == "__main__":
